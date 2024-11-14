@@ -1,0 +1,47 @@
+#include <unordered_map>
+#include <unordered_set>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <cctype>
+
+class Solution {
+public:
+    std::string mostCommonWord(std::string paragraph, std::vector<std::string>& banned) {
+        // Step 1: Normalize the paragraph by converting to lowercase and replacing punctuation with spaces
+        for (char& c : paragraph) {
+            if (ispunct(c)) {
+                c = ' ';
+            } else {
+                c = tolower(c);
+            }
+        }
+
+        // Step 2: Create a set of banned words for fast lookup
+        std::unordered_set<std::string> bannedSet(banned.begin(), banned.end());
+
+        // Step 3: Split the paragraph into words and count their occurrences
+        std::unordered_map<std::string, int> wordCount;
+        std::stringstream ss(paragraph);
+        std::string word;
+        
+        while (ss >> word) {
+            if (bannedSet.find(word) == bannedSet.end()) { // Only count if not banned
+                wordCount[word]++;
+            }
+        }
+
+        // Step 4: Find the most frequent non-banned word
+        std::string mostCommon;
+        int maxFrequency = 0;
+        
+        for (const auto& [w, count] : wordCount) {
+            if (count > maxFrequency) {
+                mostCommon = w;
+                maxFrequency = count;
+            }
+        }
+
+        return mostCommon;
+    }
+};
